@@ -31,6 +31,8 @@
     "eslint-plugin-react": "^7.6.1",
     "express": "^4.16.2",
     "extract-text-webpack-plugin": "^3.0.2",
+    "gifshot": "^0.4.5",
+    "html2canvas": "^1.0.0-alpha.12",
     "node-sass": "^4.7.2",
     "nodemon": "^1.14.12",
     "npm": "^5.6.0",
