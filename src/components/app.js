@@ -59,7 +59,16 @@ export default class App extends Component {
         }
     }
 
-    onPaste = (newCode) => {
+    getNewArrayInString = async (newarr) => {
+        this.setState({
+            code: newarr.join(' ')
+        });
+        const canvas = await html2canvas(document.querySelector("#capture"));
+        const img = await canvas.toDataURL("image/png");
+        return img;
+    }
+
+    onPaste = async (newCode) => {
         const newarr=[];
         const { images } = this.state;
         const codeSplitedArray = newCode.text.split(" ").map(String);
@@ -67,17 +76,11 @@ export default class App extends Component {
             newarr.push(codeSplitedArray[i]);
             console.log(newarr.join(' '));
             if(i % 10 === 0) {
+                const img = await this.getNewArrayInString(newarr);
+                await images.push(img);
+                console.log(images);
                 this.setState({
-                    code: newarr.join(' ')
-                }, () => {
-                    html2canvas(document.querySelector("#capture")).then(canvas => {
-                        const img = canvas.toDataURL("image/png");
-                        images.push(img);
-                        console.log(images);
-                        this.setState({
-                            images
-                        });
-                    });
+                    images
                 });
             }
         };
