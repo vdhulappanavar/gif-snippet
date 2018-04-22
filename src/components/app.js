@@ -6,7 +6,6 @@ export default class App extends Component {
         super(props);
     }
 	render () {
-        const { index, componentlist } = this.state;
 		return (
             <div>
                 Lets Code
