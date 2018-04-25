@@ -7,20 +7,21 @@ export default class App extends Component {
         super(props);
         this.state = {
             images: [],
-            code: ''
+            code: '',
+            selectValue: 0.3
         };
     }
 
     getGif = () =>{
-        const { images } = this.state;
+        const { images, selectValue } = this.state;
         html2canvas(document.querySelector("#capture")).then(canvas => {
             const img = canvas.toDataURL("image/png");
             images.push(img);
             gifshot.createGIF({
-                gifWidth: 800,
-                gifHeight: 800,
+                gifWidth: 2048,
+                gifHeight: 1536,
                 images: images,
-                interval: 0.3,
+                interval: selectValue,
                 numFrames: 10,
                 frameDuration: 1,
                 fontWeight: 'normal',
@@ -44,13 +45,11 @@ export default class App extends Component {
     }
 
     updateCode = (newCode, obj) => {
-        console.log(newCode);
         const { images } = this.state;
         if(obj.lines[0] === ' ') {
             html2canvas(document.querySelector("#capture")).then(canvas => {
                 const img = canvas.toDataURL("image/png");
                 images.push(img);
-                console.log(images);
                 this.setState({
                     images,
                     code: newCode
@@ -74,11 +73,9 @@ export default class App extends Component {
         const codeSplitedArray = newCode.text.split(" ").map(String);
         for (let i = 0; i <= codeSplitedArray.length; i++ ) {
             newarr.push(codeSplitedArray[i]);
-            console.log(newarr.join(' '));
-            if(i % 10 === 0) {
+            if(i % (codeSplitedArray.length / 10) === 0) {
                 const img = await this.getNewArrayInString(newarr);
                 await images.push(img);
-                console.log(images);
                 this.setState({
                     images
                 });
@@ -86,19 +83,48 @@ export default class App extends Component {
         };
     }
 
+    onSelectChange = (e) => {
+        this.setState({
+            selectValue:e.target.value
+        })
+    }
+
 	render () {
-        const { imageSrc } = this.state;
+        const { imageSrc, selectValue, code } = this.state;
+
+        const buttonStyle = {
+            backgroundColor: '#4CAF50',
+            border: 'none',
+            color: 'white',
+            padding: '15px 32px',
+            textAlign: 'center',
+            textDecoration: 'none',
+            display: 'inline-block',
+            fontSize: '16px',
+            marginBottom: '20px',
+            marginRight: '20px'
+        }
 		return (
             <Fragment>
-                <button onClick={this.getGif}>Get gifs</button>
+                <div>
+                    <button className="button" onClick={this.getGif} style={buttonStyle}>Get gifs</button>
+                    <select onChange={this.onSelectChange} value={selectValue}>
+                        <option value={0.1}>0.1s</option>
+                        <option value={0.2}>0.2s</option>
+                        <option value={0.3}>0.3s</option>
+                        <option value={0.4}>0.4s</option>
+                        <option value={0.5}>0.5s</option>
+                    </select>
+                </div>
                 <div id="capture">
                     <AceEditor
                         mode="java"
                         theme="monokai"
-                        value={this.state.code}
+                        value={code}
                         onChange={this.updateCode}
                         name="UNIQUE_ID_OF_DIV"
                         fontSize={30}
+                        width="100%"
                         editorProps={{$blockScrolling: true}}
                         setOptions={{
                             enableBasicAutocompletion: true,
@@ -112,7 +138,7 @@ export default class App extends Component {
                 </div>
                 {imageSrc && (
                     <Fragment>
-                        <img src={imageSrc} />
+                        <img src={imageSrc} style={{width: '100%'}}/>
                         <a href={imageSrc} download="snippet.gif">Download</a>
                     </Fragment>
                 )}
