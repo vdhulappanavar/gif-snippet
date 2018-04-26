@@ -6,7 +6,7 @@ const BUILD_DIR = path.resolve(__dirname, 'public');
 const APP_DIR = path.resolve(__dirname, 'src');
 
 const config = {
-	entry: './index.js',
+	entry: ['./index.js','./src/components/app.scss'],
 	output: {
 		path: BUILD_DIR,
 		filename: 'bundle.js'
@@ -30,7 +30,7 @@ const config = {
         },
       },
 			{
-				test: /\.scss/,
+				test: /\.scss$/,
 				include: APP_DIR,
 				loader: ExtractTextPlugin.extract({ use: ['css-loader', 'sass-loader'] })
 			}
@@ -38,7 +38,7 @@ const config = {
 	},
 	plugins: [
 		new ExtractTextPlugin({
-		  filename: 'bundle.css',
+		  filename: 'gif-bundle.css',
 		  allChunks: true,
 		}),
 	],
