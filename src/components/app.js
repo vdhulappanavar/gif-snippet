@@ -145,7 +145,7 @@ export default class App extends Component {
                             </div>
                             <div id="capture" className="subContainer__inputTextArea">
                                 <AceEditor
-                                    mode="java"
+                                    mode={mode}
                                     theme={theme}
                                     value={code}
                                     onChange={this.updateCode}
