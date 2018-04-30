@@ -8,6 +8,7 @@ import "brace/ext/searchbox";
 import "brace/keybinding/vim";
 
 import "brace/mode/css";
+import "brace/mode/javascript";
 import "brace/mode/less";
 import "brace/mode/html";
 import "brace/snippets/css";
@@ -65,8 +66,9 @@ export default class App extends Component {
         });
     }
 
-    onModeChange = (obj) => {
-        if (obj && obj.value) this.setState({ ...this.state, mode: obj.value });
+    onModeChange = (e) => {
+        const { value } = e.target;
+        this.setState({ mode: value });
       }
 
     onThemeChange = (e) => {
@@ -98,7 +100,7 @@ export default class App extends Component {
     }
 
 	render () {
-        const { imageSrc, selectValue, code, theme } = this.state;
+        const { imageSrc, selectValue, code, theme, mode } = this.state;
 
 
 		return (
@@ -125,6 +127,19 @@ export default class App extends Component {
                                     <option value='github'>github</option>
                                     <option value='monokai'>monokai</option>
                                     <option value='tomorrow'>tomorrow</option>
+                                </select>
+                                <select
+                                    style={{ paddingLeft: "15px", paddingRight: "11px" }}
+                                    name={`${name}.codeEditorTheme`}
+                                    placeholder="Theme"
+                                    value={mode}
+                                    onChange={this.onModeChange}
+                                    className="subContainer__customizeOptions__dropdown"
+                                >
+                                    <option value='javascript'>javascript</option>
+                                    <option value='css'>css</option>
+                                    <option value='less'>less</option>
+                                    <option value='html'>html</option>
                                 </select>
                                 <button className="subContainer__button" onClick={this.getGif} >Get gifs</button>
                             </div>
