@@ -294,6 +294,8 @@ export default class App extends Component {
                 const ctx = newCanvasCopy.getContext("2d")
                 // ctx.drawImage(canvas)
                 ctx.font = "40px Courier"
+                // ctx.drawImage(newCanvasCopy)
+                ctx.drawImage(canvas)
                 ctx.fillText("hey", 210, 75)
                 console.log("hello")
                 // const img = this.refs.image
