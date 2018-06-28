@@ -292,14 +292,15 @@ export default class App extends Component {
                 ctxOriginalCanavas.fillText("hey", 210, 30)                
                 const checkOutput = this.refs.checkOutput
                 checkOutput.appendChild(canvas)
-                
+                this.gif.addFrame(canvas);
                 const addNewTextCanavs = cloneCanvas(canvas)
                 const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
-                ctxOriginalCanavas.font = "40px Courier"
+                ctxaddNewTextCanavs.font = "100px Courier"
                 ctxaddNewTextCanavs.fillStyle = "#ff0000";
-                ctxaddNewTextCanavs.fillText("hey", 210, 50)                
+                ctxaddNewTextCanavs.fillText("hey111", 210, 100)                
                 // const checkOutput = this.refs.checkOutput
                 checkOutput.appendChild(addNewTextCanavs)
+                this.gif.addFrame(addNewTextCanavs);
                 // this.gif.addFrame(canvas);
             })
             .catch(function (error) {
