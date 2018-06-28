@@ -36,6 +36,7 @@ export default class App extends Component {
             code: '',
             mode: 'javascript',
             theme: 'monokai',
+            fontSize: 30,
             canavasList: null
         };
         this.gif = new GIF({
@@ -74,7 +75,7 @@ export default class App extends Component {
     }
 
     createGifForPastedCode = (text) => {
-        const { theme, mode } = this.state;        
+        const { theme, mode, fontSize } = this.state;        
         let codeSnippetNumber = 0
         console.log(text)
         text = text.text
@@ -82,77 +83,67 @@ export default class App extends Component {
         var splits = text.split('');
 
         const basicDom = document.getElementById("codeSnippet")
+        basicDom.style.display = "block"
         console.log(basicDom)
 
         domtoimage.toCanvas(basicDom)
             .then((canvas) => {
-                console.log(canvas) 
-                const ctxOriginalCanavas = canvas.getContext('2d')
-                ctxOriginalCanavas.font = "40px Courier"
-                ctxOriginalCanavas.fillStyle = "#ffffff";
-                ctxOriginalCanavas.fillText("hey", 210, 30)                
-                const checkOutput = this.refs.checkOutput
-                checkOutput.appendChild(canvas)
-                this.gif.addFrame(canvas);
-                const addNewTextCanavs = cloneCanvas(canvas)
-                const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
-                ctxaddNewTextCanavs.font = "100px Courier"
-                ctxaddNewTextCanavs.fillStyle = "#ff0000";
-                ctxaddNewTextCanavs.fillText("hey111", 210, 100)                
+                basicDom.style.display = "none"
+                // console.log(canvas) 
+                // const ctxOriginalCanavas = canvas.getContext('2d')
+                // ctxOriginalCanavas.font = "40px Courier"
+                // ctxOriginalCanavas.fillStyle = "#ffffff";
+                // ctxOriginalCanavas.fillText("hey", 210, 30)                
                 // const checkOutput = this.refs.checkOutput
-                checkOutput.appendChild(addNewTextCanavs)
-                this.gif.addFrame(addNewTextCanavs);
+                // checkOutput.appendChild(canvas)
                 // this.gif.addFrame(canvas);
+                // const addNewTextCanavs = cloneCanvas(canvas)
+                // const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
+                // ctxaddNewTextCanavs.font = "100px Courier"
+                // ctxaddNewTextCanavs.fillStyle = "#ff0000";
+                // ctxaddNewTextCanavs.fillText("hey111", 210, 100)                
+                // // const checkOutput = this.refs.checkOutput
+                // checkOutput.appendChild(addNewTextCanavs)
+                // this.gif.addFrame(addNewTextCanavs);
+                // this.gif.addFrame(canvas);
+                
+
+                // const checkOutput = this.refs.checkOutput
+                for(let index=0; index<splits.length; index++){
+                    const token = splits[index]
+                    if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
+                        const textToAdd = text.slice(0, index)
+                        const addNewTextCanavs = cloneCanvas(canvas)
+                        const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
+                        ctxaddNewTextCanavs.font = `${fontSize}px Courier`
+                        ctxaddNewTextCanavs.fillStyle = "#ffffff";
+                        ctxaddNewTextCanavs.fillText(textToAdd, 210, 30)
+                        // checkOutput.appendChild(addNewTextCanavs)
+                        this.gif.addFrame(addNewTextCanavs);
+                    }
+                }
             })
             .catch(function (error) {
                 console.log("something went wrong ", error)
             });  
 
             function cloneCanvas(oldCanvas) {
-
-                //create a new canvas
                 var newCanvas = document.createElement('canvas');
                 var context = newCanvas.getContext('2d');
-            
-                //set dimensions
                 newCanvas.width = oldCanvas.width;
                 newCanvas.height = oldCanvas.height;
-            
-                //apply the old canvas to the new one
                 context.drawImage(oldCanvas, 0, 0);
-            
-                //return the new canvas
                 return newCanvas;
             }
-        // function newCanvas(domNode) {
-        //     console.log("in newCanavs")
-        //     console.log(domNode.width)
-        //     let canvas = document.createElement('canvas');
-        //     console.log(canvas)
-        //     // console.log(document.createElement('canvas'))
-        //     // canvas.width = options.width || util.width(domNode);
-        //     // canvas.height = options.height || util.height(domNode);
-        //     canvas.width = domNode.width
-        //     canvas.height = domNode.height
-        //     console.log(canvas)
-        //     console.log(canvas)
-
-        //     return canvas;
-        // }
-        
-
     }
 
 
     render() {
-        const { imageSrc, code, theme, mode } = this.state;        
+        const { imageSrc, code, theme, mode, fontSize } = this.state;        
         return(
         <div>
             <div ref="checkOutput" id="checkOutput"> 
             </div>
-            <canvas ref="checkNewCanavas" width={640} height={425} />
-            {/* <canvas ref="myCanvas" width={640} height={425} />             */}
-            {/* <canvas ref="canvas" id="canavs" width={640} height={425} /> */}
             <div id="capture">
                 <AceEditor
                     mode={mode}
@@ -161,7 +152,7 @@ export default class App extends Component {
                     onPaste={(newCode, obj) => { this.onPasteChange = true; this.createGifForPastedCode(newCode, obj)}}
                     onChange={ (newCode, obj) => {this.updateCode (newCode, obj, this.onPasteChange)}}                                    
                     name="UNIQUE_ID_OF_DIV"
-                    fontSize={30}
+                    fontSize={fontSize}
                     focus={true}
                     className="aceEditor"
                     width={`${this.editorWidth}px`}
@@ -187,42 +178,32 @@ export default class App extends Component {
                                 <img className="subContainer__outputContainer__img" src={imageSrc}  ref={(element) => { this.outputContainer = element; }}/>
                             </div>
                         )}
-            <div id={`codeSnippet`}>
-                <AceEditor
-                    mode={mode}
-                    theme={theme}
-                    value={''}
-                    name={`UNIQUE_ID_OF_DIV`}
-                    fontSize={30}
-                    className="aceEditor"
-                    width={`${this.editorWidth}px`}
-                    height={`${this.editorHeight}px`}
-                    editorProps={{$blockScrolling: true}}
-                    setOptions={{
-                        enableBasicAutocompletion: true,
-                        enableLiveAutocompletion: true,
-                        enableSnippets: false,
-                        showLineNumbers: true,
-                        tabSize: 2,
-                        wrapBehavioursEnabled: true,
-                        wrap: true,
-                        useSoftTabs: true
-                    }}
-                    editorProps={{$blockScrolling: true}}
-                />
+            <div>
+                <div id={`codeSnippet`} style={{display: "none"}}>
+                    <AceEditor
+                        mode={mode}
+                        theme={theme}
+                        value={''}
+                        name={`UNIQUE_ID_OF_DIV`}
+                        fontSize={30}
+                        className="aceEditor"
+                        width={`${this.editorWidth}px`}
+                        height={`${this.editorHeight}px`}
+                        editorProps={{$blockScrolling: true}}
+                        setOptions={{
+                            enableBasicAutocompletion: true,
+                            enableLiveAutocompletion: true,
+                            enableSnippets: false,
+                            showLineNumbers: true,
+                            tabSize: 2,
+                            wrapBehavioursEnabled: true,
+                            wrap: true,
+                            useSoftTabs: true
+                        }}
+                        editorProps={{$blockScrolling: true}}
+                    />
                 </div>
-            {/* <img style={{display: "none"}} ref="image" src={`https://i.ytimg.com/vi/SfLV8hD7zX4/maxresdefault.jpg`} className="hidden" /> */}
-            {/* <hr/>
-            {
-                this.state.canavasList && 
-                this.state.canavasList.map(obj => {
-                    console.log(obj)
-                    return(
-                    <div>
-                        {obj}
-                    </div>
-                ) })
-            } */}
+            </div>
         </div>
         )
     }
