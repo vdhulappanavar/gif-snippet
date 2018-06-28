@@ -288,15 +288,40 @@ export default class App extends Component {
                 console.log(canvas) 
                 const ctxOriginalCanavas = canvas.getContext('2d')
                 ctxOriginalCanavas.font = "40px Courier"
-                ctxOriginalCanavas.fillText("hey", 210, 75)                
+                ctxOriginalCanavas.fillStyle = "#ffffff";
+                ctxOriginalCanavas.fillText("hey", 210, 30)                
                 const checkOutput = this.refs.checkOutput
                 checkOutput.appendChild(canvas)
                 
+                const addNewTextCanavs = cloneCanvas(canvas)
+                const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
+                ctxOriginalCanavas.font = "40px Courier"
+                ctxaddNewTextCanavs.fillStyle = "#ff0000";
+                ctxaddNewTextCanavs.fillText("hey", 210, 50)                
+                // const checkOutput = this.refs.checkOutput
+                checkOutput.appendChild(addNewTextCanavs)
                 // this.gif.addFrame(canvas);
             })
             .catch(function (error) {
                 console.log("something went wrong ", error)
             });  
+
+            function cloneCanvas(oldCanvas) {
+
+                //create a new canvas
+                var newCanvas = document.createElement('canvas');
+                var context = newCanvas.getContext('2d');
+            
+                //set dimensions
+                newCanvas.width = oldCanvas.width;
+                newCanvas.height = oldCanvas.height;
+            
+                //apply the old canvas to the new one
+                context.drawImage(oldCanvas, 0, 0);
+            
+                //return the new canvas
+                return newCanvas;
+            }
         // function newCanvas(domNode) {
         //     console.log("in newCanavs")
         //     console.log(domNode.width)
