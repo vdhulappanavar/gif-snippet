@@ -286,53 +286,43 @@ export default class App extends Component {
         domtoimage.toCanvas(basicDom)
             .then((canvas) => {
                 console.log(canvas) 
-                const canvasCopy = newCanvas(canvas);
-                // canvasCopy.getContext('2d').fillText('hello', 210, 75)
-                console.log(canvasCopy)
-                const newCanvasCopy = this.refs.checkNewCanavas
-                console.log("newCanavas:", newCanvasCopy)
-                const ctx = newCanvasCopy.getContext("2d")
-                // ctx.drawImage(canvas)
-                ctx.font = "40px Courier"
-                // ctx.drawImage(newCanvasCopy)
-                ctx.drawImage(canvas)
-                ctx.fillText("hey", 210, 75)
-                console.log("hello")
-                // const img = this.refs.image
-                // img.onload = () => {
-                // ctx.drawImage(img, 0, 0)
-                // ctx.font = "40px Courier"
-                // ctx.fillText(this.props.text, 210, 75)
-                // }
+                const ctxOriginalCanavas = canvas.getContext('2d')
+                ctxOriginalCanavas.font = "40px Courier"
+                ctxOriginalCanavas.fillText("hey", 210, 75)                
+                const checkOutput = this.refs.checkOutput
+                checkOutput.appendChild(canvas)
+                
                 // this.gif.addFrame(canvas);
             })
             .catch(function (error) {
-                
+                console.log("something went wrong ", error)
             });  
-        function newCanvas(domNode) {
-            console.log("in newCanavs")
-            console.log(domNode.width)
-            let canvas = document.createElement('canvas');
-            console.log(canvas)
-            // console.log(document.createElement('canvas'))
-            // canvas.width = options.width || util.width(domNode);
-            // canvas.height = options.height || util.height(domNode);
-            canvas.width = domNode.width
-            canvas.height = domNode.height
-            console.log(canvas)
-            console.log(canvas)
+        // function newCanvas(domNode) {
+        //     console.log("in newCanavs")
+        //     console.log(domNode.width)
+        //     let canvas = document.createElement('canvas');
+        //     console.log(canvas)
+        //     // console.log(document.createElement('canvas'))
+        //     // canvas.width = options.width || util.width(domNode);
+        //     // canvas.height = options.height || util.height(domNode);
+        //     canvas.width = domNode.width
+        //     canvas.height = domNode.height
+        //     console.log(canvas)
+        //     console.log(canvas)
 
-            return canvas;
-        }
+        //     return canvas;
+        // }
         
 
     }
 
 
     render() {
-        const { imageSrc, selectValue, code, theme, mode } = this.state;        
+        const { imageSrc, code, theme, mode } = this.state;        
         return(
         <div>
+            <div ref="checkOutput" id="checkOutput"> 
+            </div>
             <canvas ref="checkNewCanavas" width={640} height={425} />
             {/* <canvas ref="myCanvas" width={640} height={425} />             */}
             {/* <canvas ref="canvas" id="canavs" width={640} height={425} /> */}
