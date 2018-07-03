@@ -35,6 +35,7 @@ export default class App extends Component {
             theme: 'monokai',
             subDOM : []
         };
+        this.typedCode = ''
         this.gif = new GIF({
             workers: 2,
             quality: 10,
@@ -92,8 +93,9 @@ export default class App extends Component {
                 console.error('oops, something went wrong!', error);
             });
         }
+        this.typedCode = this.typedCode + newCode
         // this.setState({
-        //     code: this.state.code+newCode
+        //     typedCode: this.state.code+newCode
         // });
     }
 
@@ -109,13 +111,13 @@ export default class App extends Component {
     }
     
     genrateSubFrames = async (text) => {
-        const code = this.state.code + text
+        const code = this.typedCode + text
         const { theme, mode } = this.state;
         const splits = text.split('');
         for(let index=0; index<splits.length; index++){
             const token = splits[index]
             if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
-                const textToAdd = text.slice(0, index)
+                const textToAdd = this.typedCode + text.slice(0, index)
                 const id = index.toString()
                 const subnode = (<div id={id} >
                 <AceEditor
@@ -141,7 +143,7 @@ export default class App extends Component {
                     editorProps={{$blockScrolling: true}}
                 /></div>)
                 // subContainers.appendChild(subnode)
-                this.setState({ code: code, subDOM : [...this.state.subDOM, subnode]})
+                this.setState({ code: code, typedCode: code, subDOM : [...this.state.subDOM, subnode]})
                 const subConatinerDOM = document.getElementById(id)
                 subConatinerDOM.style.display = "block"
                 domtoimage.toCanvas(subConatinerDOM)
