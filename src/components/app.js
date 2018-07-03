@@ -136,7 +136,7 @@ export default class App extends Component {
                 subConatinerDOM.style.display = "block"
                 domtoimage.toCanvas(subConatinerDOM)
                 .then((canvas) => {
-                    // subConatinerDOM.style.display = "none"
+                    subConatinerDOM.style.display = "none"
                     this.gif.addFrame(canvas);
                 })
                 .catch(function (error) {
