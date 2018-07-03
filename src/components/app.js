@@ -27,17 +27,13 @@ import "brace/theme/terminal";
 import "brace/theme/solarized_light";
 
 export default class App extends Component {
-
-    constructor(props){
-        super(props)
-        this.editorHeight = window.screen.height * 0.6,
-        this.editorWidth = window.screen.width * 0.8
+    constructor(props) {
+        super(props);
         this.state = {
             code: '',
             mode: 'javascript',
             theme: 'monokai',
-            fontSize: 30,
-            canavasList: null
+            subDOM : []
         };
         this.gif = new GIF({
             workers: 2,
@@ -45,6 +41,9 @@ export default class App extends Component {
             repeat: props.repeat || 0,
             quality: props.quality || 10
         });
+        this.editorHeight = window.screen.height * 0.6,
+        this.editorWidth = window.screen.width * 0.8
+        this.onPasteChange = false
     }
 
     getGif = () => {
@@ -65,95 +64,56 @@ export default class App extends Component {
             scrollIntoViewElement.scrollIntoView({ block: 'end',  behavior: 'smooth' });
         })
         .catch((error) => {
-            
+            console.error('oops, something went wrong!', error);
         });
-        
     }
 
-    updateCode = () => {
-        console.log("in updateCode")
+    onModeChange = (e) => {
+        const { value } = e.target;
+        this.setState({ mode: value });
+      }
+
+    onThemeChange = (e) => {
+        const { value } = e.target;
+        this.setState({ theme: value });
     }
 
-    createGifForPastedCode = (text) => {
-        const { theme, mode, fontSize } = this.state;        
-        let codeSnippetNumber = 0
-        console.log(text)
-        text = text.text
-        console.log("in createGifForPastedCode")
-        var splits = text.split('');
-
-        const basicDom = document.getElementById("codeSnippet")
-        basicDom.style.display = "block"
-        console.log(basicDom)
-
-        domtoimage.toCanvas(basicDom)
+    updateCode = async (newCode, obj) => {
+        const node = document.querySelector("#capture");
+        const { lines, start, end, action } = obj;
+        if(((String(lines[0]).trim().length === 0) || (lines[0] === '.') || (lines[0] === ',') || (obj.lines[0] === ';'))) {
+            domtoimage.toCanvas(node)
             .then((canvas) => {
-                basicDom.style.display = "none"
-                // console.log(canvas) 
-                // const ctxOriginalCanavas = canvas.getContext('2d')
-                // ctxOriginalCanavas.font = "40px Courier"
-                // ctxOriginalCanavas.fillStyle = "#ffffff";
-                // ctxOriginalCanavas.fillText("hey", 210, 30)                
-                // const checkOutput = this.refs.checkOutput
-                // checkOutput.appendChild(canvas)
-                // this.gif.addFrame(canvas);
-                // const addNewTextCanavs = cloneCanvas(canvas)
-                // const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
-                // ctxaddNewTextCanavs.font = "100px Courier"
-                // ctxaddNewTextCanavs.fillStyle = "#ff0000";
-                // ctxaddNewTextCanavs.fillText("hey111", 210, 100)                
-                // // const checkOutput = this.refs.checkOutput
-                // checkOutput.appendChild(addNewTextCanavs)
-                // this.gif.addFrame(addNewTextCanavs);
-                // this.gif.addFrame(canvas);
-                
-
-                // const checkOutput = this.refs.checkOutput
-                for(let index=0; index<splits.length; index++){
-                    const token = splits[index]
-                    if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
-                        const textToAdd = text.slice(0, index)
-                        const addNewTextCanavs = cloneCanvas(canvas)
-                        const ctxaddNewTextCanavs = addNewTextCanavs.getContext('2d')
-                        ctxaddNewTextCanavs.font = `${fontSize}px Courier`
-                        ctxaddNewTextCanavs.fillStyle = "#ffffff";
-                        ctxaddNewTextCanavs.fillText(textToAdd, 210, 30)
-                        // checkOutput.appendChild(addNewTextCanavs)
-                        this.gif.addFrame(addNewTextCanavs);
-                    }
-                }
+                this.gif.addFrame(canvas);
             })
             .catch(function (error) {
-                console.log("something went wrong ", error)
-            });  
-
-            function cloneCanvas(oldCanvas) {
-                var newCanvas = document.createElement('canvas');
-                var context = newCanvas.getContext('2d');
-                newCanvas.width = oldCanvas.width;
-                newCanvas.height = oldCanvas.height;
-                context.drawImage(oldCanvas, 0, 0);
-                return newCanvas;
-            }
+                console.error('oops, something went wrong!', error);
+            });
+        }
+        this.setState({
+            code: newCode
+        });
     }
-
-
-    render() {
-        const { imageSrc, code, theme, mode, fontSize } = this.state;        
-        return(
-        <div>
-            <div ref="checkOutput" id="checkOutput"> 
-            </div>
-            <div id="capture">
+    
+    genrateSubFrames = async (text) => {
+        const { theme, mode } = this.state;
+        this.onPasteChange = true
+        text = text.text
+        setTimeout(() => { this.onPasteChange = false} , 1000)
+        const subContainers = this.refs.subContainers
+        const splits = text.split('');
+        for(let index=0; index<splits.length; index++){
+            const token = splits[index]
+            if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
+                const textToAdd = text.slice(0, index)
+                const id = index.toString()
+                const subnode = (<div id={id} >
                 <AceEditor
                     mode={mode}
                     theme={theme}
-                    value={code}
-                    onPaste={(newCode, obj) => { this.onPasteChange = true; this.createGifForPastedCode(newCode, obj)}}
-                    onChange={ (newCode, obj) => {this.updateCode (newCode, obj, this.onPasteChange)}}                                    
-                    name="UNIQUE_ID_OF_DIV"
-                    fontSize={fontSize}
-                    focus={true}
+                    value={textToAdd}
+                    name={'UNIQUE_ID'}
+                    fontSize={30}
                     className="aceEditor"
                     width={`${this.editorWidth}px`}
                     height={`${this.editorHeight}px`}
@@ -169,42 +129,111 @@ export default class App extends Component {
                         useSoftTabs: true
                     }}
                     editorProps={{$blockScrolling: true}}
-                />
-            </div>
-            <button onClick={this.getGif}>GET GIF</button>
-            {imageSrc && (
+                /></div>)
+                // subContainers.appendChild(subnode)
+                this.setState({ subDOM : [...this.state.subDOM, subnode]})
+                const subConatinerDOM = document.getElementById(id)
+                subConatinerDOM.style.display = "block"
+                domtoimage.toCanvas(subConatinerDOM)
+                .then((canvas) => {
+                    // subConatinerDOM.style.display = "none"
+                    this.gif.addFrame(canvas);
+                })
+                .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                });
+            }
+        }
+    }
+
+    onSelectChange = (e) => {
+        this.setState({
+            selectValue:e.target.value
+        })
+    }
+
+	render () {
+        const { imageSrc, selectValue, code, theme, mode } = this.state;
+
+		return (
+                <div className="container">
+                    <h1 className="container__header">Gif Snippet</h1>
+                    <div className="subContainer">
+                        <div className = "subContainer__inputContainer">
+                            <div className="subContainer__customizeOptions">
+                                <select className="subContainer__customizeOptions__dropdown" onChange={this.onSelectChange} value={selectValue}>
+                                    <option value={0.1}>0.1s</option>
+                                    <option value={0.2}>0.2s</option>
+                                    <option value={0.3}>0.3s</option>
+                                    <option value={0.4}>0.4s</option>
+                                    <option value={0.5}>0.5s</option>
+                                </select>
+                                <select
+                                    style={{ paddingLeft: "15px", paddingRight: "11px" }}
+                                    name={`${name}.codeEditorTheme`}
+                                    placeholder="Theme"
+                                    value={theme}
+                                    onChange={this.onThemeChange}
+                                    className="subContainer__customizeOptions__dropdown"
+                                >
+                                    <option value='github'>github</option>
+                                    <option value='monokai'>monokai</option>
+                                    <option value='tomorrow'>tomorrow</option>
+                                </select>
+                                <select
+                                    style={{ paddingLeft: "15px", paddingRight: "11px" }}
+                                    name={`${name}.codeEditorTheme`}
+                                    placeholder="Theme"
+                                    value={mode}
+                                    onChange={this.onModeChange}
+                                    className="subContainer__customizeOptions__dropdown"
+                                >
+                                    <option value='javascript'>javascript</option>
+                                    <option value='css'>css</option>
+                                    <option value='less'>less</option>
+                                    <option value='html'>html</option>
+                                </select>
+                                <button className="subContainer__button" onClick={this.getGif} >Get gifs</button>
+                            </div>
+                            <div id="capture" className="subContainer__inputTextArea">
+                                <AceEditor
+                                    mode={mode}
+                                    theme={theme}
+                                    value={code}
+                                    onPaste={this.genrateSubFrames}
+                                    onChange={this.updateCode}
+                                    name="UNIQUE_ID_OF_DIV"
+                                    fontSize={30}
+                                    focus={true}
+                                    className="aceEditor"
+                                    width={`${this.editorWidth}px`}
+                                    height={`${this.editorHeight}px`}
+                                    editorProps={{$blockScrolling: true}}
+                                    setOptions={{
+                                        enableBasicAutocompletion: true,
+                                        enableLiveAutocompletion: true,
+                                        enableSnippets: false,
+                                        showLineNumbers: true,
+                                        tabSize: 2,
+                                        wrapBehavioursEnabled: true,
+                                        wrap: true,
+                                        useSoftTabs: true
+                                    }}
+                                    editorProps={{$blockScrolling: true}}
+                                />
+                            </div>
+                        </div>
+                        {imageSrc && (
                             <div className="subContainer__outputContainer">
                                 <a className="subContainer__button" href={imageSrc} download="snippet.gif">Download</a>
                                 <img className="subContainer__outputContainer__img" src={imageSrc}  ref={(element) => { this.outputContainer = element; }}/>
                             </div>
                         )}
-            <div>
-                <div id={`codeSnippet`} style={{display: "none"}}>
-                    <AceEditor
-                        mode={mode}
-                        theme={theme}
-                        value={''}
-                        name={`UNIQUE_ID_OF_DIV`}
-                        fontSize={30}
-                        className="aceEditor"
-                        width={`${this.editorWidth}px`}
-                        height={`${this.editorHeight}px`}
-                        editorProps={{$blockScrolling: true}}
-                        setOptions={{
-                            enableBasicAutocompletion: true,
-                            enableLiveAutocompletion: true,
-                            enableSnippets: false,
-                            showLineNumbers: true,
-                            tabSize: 2,
-                            wrapBehavioursEnabled: true,
-                            wrap: true,
-                            useSoftTabs: true
-                        }}
-                        editorProps={{$blockScrolling: true}}
-                    />
+                    </div>
+                    <div id="subContainers" ref="subContainers"> 
+                        {this.state.subDOM.map((obj, index) => <div id={index} key={index}>{obj}</div>)}
+                    </div>
                 </div>
-            </div>
-        </div>
-        )
-    }
+		);
+	}
 }
