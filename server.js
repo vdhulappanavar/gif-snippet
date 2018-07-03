@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 
 const DIST_DIR = path.join(__dirname, "public");
-const PORT = 1000;
+const PORT = 3000;
 const app = express();
 
 app.use(express.static(DIST_DIR));

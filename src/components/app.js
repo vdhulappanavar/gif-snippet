@@ -92,9 +92,9 @@ export default class App extends Component {
                 console.error('oops, something went wrong!', error);
             });
         }
-        this.setState({
-            code: newCode
-        });
+        // this.setState({
+        //     code: this.state.code+newCode
+        // });
     }
 
     processPastedCode = (text) => {
@@ -102,7 +102,6 @@ export default class App extends Component {
         // this.setState({code: "hola"})
         this.onPasteChange = true
         text = text.text
-        // this.setState({code: text})
         setTimeout(() => { this.onPasteChange = false} , 1000)
         setTimeout(() => this.genrateSubFrames(text))
         console.log("hey")
@@ -110,12 +109,8 @@ export default class App extends Component {
     }
     
     genrateSubFrames = async (text) => {
+        const code = this.state.code + text
         const { theme, mode } = this.state;
-        // this.onPasteChange = true
-        // text = text.text
-        // // this.setState({code: text})
-        // setTimeout(() => { this.onPasteChange = false} , 1000)
-        // const subContainers = this.refs.subContainers
         const splits = text.split('');
         for(let index=0; index<splits.length; index++){
             const token = splits[index]
@@ -146,7 +141,7 @@ export default class App extends Component {
                     editorProps={{$blockScrolling: true}}
                 /></div>)
                 // subContainers.appendChild(subnode)
-                this.setState({ subDOM : [...this.state.subDOM, subnode]})
+                this.setState({ code: code, subDOM : [...this.state.subDOM, subnode]})
                 const subConatinerDOM = document.getElementById(id)
                 subConatinerDOM.style.display = "block"
                 domtoimage.toCanvas(subConatinerDOM)
