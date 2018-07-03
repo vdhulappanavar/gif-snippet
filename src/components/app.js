@@ -99,12 +99,12 @@ export default class App extends Component {
 
     processPastedCode = (text) => {
         const startime = new Date()
-        this.setState({code: "hola"})
+        // this.setState({code: "hola"})
         this.onPasteChange = true
         text = text.text
         // this.setState({code: text})
         setTimeout(() => { this.onPasteChange = false} , 1000)
-        this.genrateSubFrames(text)
+        setTimeout(() => this.genrateSubFrames(text))
         console.log("hey")
         return
     }
@@ -214,6 +214,13 @@ export default class App extends Component {
                                 <AceEditor
                                     mode={mode}
                                     theme={theme}
+                                    // value={`var ctx = canvas.getContext("2d");
+                                    // ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+                                    // ctx.fillRect(100, 100, 200, 200);
+                                    // ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
+                                    // ctx.fillRect(150, 150, 200, 200);
+                                    // ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
+                                    // ctx.fillRect(200, 50, 200, 200);`}
                                     value={code}
                                     onPaste={this.processPastedCode}
                                     onChange={this.updateCode}
