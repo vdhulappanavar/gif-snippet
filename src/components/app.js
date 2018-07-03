@@ -79,6 +79,8 @@ export default class App extends Component {
     }
 
     updateCode = async (newCode, obj) => {
+        if(this.onPasteChange)
+            return
         const node = document.querySelector("#capture");
         const { lines, start, end, action } = obj;
         if(((String(lines[0]).trim().length === 0) || (lines[0] === '.') || (lines[0] === ',') || (obj.lines[0] === ';'))) {
@@ -94,13 +96,26 @@ export default class App extends Component {
             code: newCode
         });
     }
+
+    processPastedCode = (text) => {
+        const startime = new Date()
+        this.setState({code: "hola"})
+        this.onPasteChange = true
+        text = text.text
+        // this.setState({code: text})
+        setTimeout(() => { this.onPasteChange = false} , 1000)
+        this.genrateSubFrames(text)
+        console.log("hey")
+        return
+    }
     
     genrateSubFrames = async (text) => {
         const { theme, mode } = this.state;
-        this.onPasteChange = true
-        text = text.text
-        setTimeout(() => { this.onPasteChange = false} , 1000)
-        const subContainers = this.refs.subContainers
+        // this.onPasteChange = true
+        // text = text.text
+        // // this.setState({code: text})
+        // setTimeout(() => { this.onPasteChange = false} , 1000)
+        // const subContainers = this.refs.subContainers
         const splits = text.split('');
         for(let index=0; index<splits.length; index++){
             const token = splits[index]
@@ -200,7 +215,7 @@ export default class App extends Component {
                                     mode={mode}
                                     theme={theme}
                                     value={code}
-                                    onPaste={this.genrateSubFrames}
+                                    onPaste={this.processPastedCode}
                                     onChange={this.updateCode}
                                     name="UNIQUE_ID_OF_DIV"
                                     fontSize={30}
