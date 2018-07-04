@@ -26,6 +26,8 @@ import "brace/theme/solarized_dark";
 import "brace/theme/terminal";
 import "brace/theme/solarized_light";
 
+const uuid = require('uuidv4');
+
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -120,7 +122,8 @@ export default class App extends Component {
             const token = splits[index]
             if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
                 const textToAdd = PreviousCodeSnippetcode + text.slice(0, index)
-                const id = index.toString()
+                // const id = index.toString()
+                const id = uuid()
                 const subnode = (<div id={id} >
                 <AceEditor
                     mode={mode}
