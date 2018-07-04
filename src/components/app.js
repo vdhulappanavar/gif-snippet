@@ -54,7 +54,8 @@ export default class App extends Component {
             this.gif.on('finished', (blob) => {
                 const image = URL.createObjectURL(blob);
                 this.setState({
-                    imageSrc: image
+                    imageSrc: image,
+                    code: this.typedCode
                 });
             });
             this.gif.render();
@@ -93,7 +94,7 @@ export default class App extends Component {
                 console.error('oops, something went wrong!', error);
             });
         }
-        this.typedCode = this.typedCode + newCode
+        this.typedCode = newCode
         // this.setState({
         //     typedCode: this.state.code+newCode
         // });
@@ -104,20 +105,21 @@ export default class App extends Component {
         // this.setState({code: "hola"})
         this.onPasteChange = true
         text = text.text
-        setTimeout(() => { this.onPasteChange = false} , 1000)
+        setTimeout(() => { this.onPasteChange = false})
         setTimeout(() => this.genrateSubFrames(text))
         console.log("hey")
         return
     }
     
     genrateSubFrames = async (text) => {
-        const code = this.typedCode + text
+        const PreviousCodeSnippetcode = this.typedCode
+        this.typedCode = this.typedCode + text
         const { theme, mode } = this.state;
         const splits = text.split('');
         for(let index=0; index<splits.length; index++){
             const token = splits[index]
             if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
-                const textToAdd = this.typedCode + text.slice(0, index)
+                const textToAdd = PreviousCodeSnippetcode + text.slice(0, index)
                 const id = index.toString()
                 const subnode = (<div id={id} >
                 <AceEditor
@@ -143,7 +145,7 @@ export default class App extends Component {
                     editorProps={{$blockScrolling: true}}
                 /></div>)
                 // subContainers.appendChild(subnode)
-                this.setState({ code: code, typedCode: code, subDOM : [...this.state.subDOM, subnode]})
+                this.setState({ code:  this.typedCode, subDOM : [...this.state.subDOM, subnode]})
                 const subConatinerDOM = document.getElementById(id)
                 subConatinerDOM.style.display = "block"
                 domtoimage.toCanvas(subConatinerDOM)
