@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
-import AceEditor from 'react-ace';;
+import AceEditor from 'react-ace';
+import ReactDOMServer from 'react-dom/server';
 
 import domtoimage from '../utils/domToCanvas';
 
@@ -148,12 +149,27 @@ export default class App extends Component {
                     editorProps={{$blockScrolling: true}}
                 /></div>)
                 // subContainers.appendChild(subnode)
-                this.setState({ code:  this.typedCode, subDOM : [...this.state.subDOM, subnode]})
-                const subConatinerDOM = document.getElementById(id)
-                subConatinerDOM.style.display = "block"
-                domtoimage.toCanvas(subConatinerDOM)
+                // console.log('subNode')
+                // console.log(subnode)
+                // console.log(typeof subnode)
+                // console.log("renderToStaticMarkup")
+                // console.log(ReactDOMServer.renderToString())
+                // console.log("------------")
+                // console.log(ReactDOMServer.renderToStaticMarkup(subnode))
+                // console.log("**********")
+                // this.setState({ code:  this.typedCode, subDOM : [...this.state.subDOM, subnode]})
+                // const subConatinerDOM = document.getElementById(id)
+                // console.log("subContainerDOM")
+                // console.log(subConatinerDOM)
+                // console.log(typeof subConatinerDOM)
+                // subConatinerDOM.style.display = "block"
+                const ReactDOMtoDOMObect  = ReactDOMServer.renderToStaticMarkup(subnode)
+                console.log(ReactDOMtoDOMObect)
+                domtoimage.toCanvas(ReactDOMtoDOMObect)
                 .then((canvas) => {
-                    subConatinerDOM.style.display = "none"
+                    console.log("canvas")
+                    console.log(canvas)
+                    // subConatinerDOM.style.display = "none"
                     this.gif.addFrame(canvas);
                 })
                 .catch(function (error) {
