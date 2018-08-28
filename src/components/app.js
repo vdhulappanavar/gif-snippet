@@ -125,8 +125,9 @@ export default class App extends Component {
                 const textToAdd = PreviousCodeSnippetcode + text.slice(0, index)
                 // const id = index.toString()
                 const id = uuid()
-                const subnode = (<div id={id} >
+                const subnode = (
                 <AceEditor
+                    id={id}
                     mode={mode}
                     theme={theme}
                     value={textToAdd}
@@ -147,7 +148,7 @@ export default class App extends Component {
                         useSoftTabs: true
                     }}
                     editorProps={{$blockScrolling: true}}
-                /></div>)
+                />)
                 // subContainers.appendChild(subnode)
                 // console.log('subNode')
                 // console.log(subnode)
@@ -164,8 +165,15 @@ export default class App extends Component {
                 // console.log(typeof subConatinerDOM)
                 // subConatinerDOM.style.display = "block"
                 const ReactDOMtoDOMObect  = ReactDOMServer.renderToStaticMarkup(subnode)
+                console.log(ReactDOMServer.renderToString(subnode))
                 console.log(ReactDOMtoDOMObect)
-                domtoimage.toCanvas(ReactDOMtoDOMObect)
+                const DOMobject = document.createElement('div')
+                DOMobject.innerHTML = ReactDOMtoDOMObect
+                DOMobject.height = this.editorHeight
+                DOMobject.width = this.editorWidth
+                console.log(DOMobject)
+                domtoimage.toCanvas(DOMobject)
+                // console.log(DOMobject)
                 .then((canvas) => {
                     console.log("canvas")
                     console.log(canvas)
