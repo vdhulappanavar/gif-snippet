@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import AceEditor from 'react-ace';
 import ReactDOMServer from 'react-dom/server';
+import ReactDOM from 'react-dom';
 
 import domtoimage from '../utils/domToCanvas';
 
@@ -220,9 +221,13 @@ export default class App extends Component {
                     }}
                     editorProps={{$blockScrolling: true}}
                 />)
+                const root = document.querySelector('#subcontainer__ReactDOMRender');
+                console.log(root)
+                console.log(ReactDOM.render(ReactDOMServer.renderToString(subnode), root))
                 this.setState({
                     renderToStringString: ReactDOMServer.renderToString(subnode),
                     renderToStaticStringString: ReactDOMServer.renderToStaticMarkup(subnode)
+                    // reactDOMRenderString
                 })
     }
 
@@ -244,6 +249,8 @@ export default class App extends Component {
                 <div className="container">
                     <h1 className="container__header">Gif Snippet</h1>
                     <div className="subContainer">
+                        <div id="subcontainer__ReactDOMRender"> 
+                        </div>
                         <div id="subcontainer__checkenderToString" style={{color:'white'}}>
                             <div dangerouslySetInnerHTML={this.createMarkup()} />
                         </div>
@@ -252,8 +259,8 @@ export default class App extends Component {
                                 (renderToStringString)
                             }
                         </div>
-                        <div id="subcontainer__checkenderToString" innerHTML="{renderToStringString}">
-                        </div>
+                        {/* <div id="subcontainer__checkenderToString" innerHTML="{renderToStringString}">
+                        </div> */}
                         <div id="subcontainer__checkenderToString">
                             {
                                 renderToStaticStringString
