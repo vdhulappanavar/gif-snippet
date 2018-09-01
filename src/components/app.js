@@ -36,8 +36,11 @@ export default class App extends Component {
             code: '',
             mode: 'javascript',
             theme: 'monokai',
-            subDOM : []
+            subDOM : [],
+            renderToStringString: '<div style="color:white">H</div>',
+            renderToStaticStringString: '<div>I>/div>'
         };
+        console.log(typeof this.state.renderToStringString)
         this.typedCode = ''
         this.gif = new GIF({
             workers: 2,
@@ -114,23 +117,91 @@ export default class App extends Component {
         return
     }
     
+    // genrateSubFrames = async (text) => {
+    //     const PreviousCodeSnippetcode = this.typedCode
+    //     this.typedCode = this.typedCode + text
+    //     const { theme, mode } = this.state;
+    //     const splits = text.split('');
+    //     for(let index=0; index<splits.length; index++){
+    //         const token = splits[index]
+    //         if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
+    //             const textToAdd = PreviousCodeSnippetcode + text.slice(0, index)
+    //             // const id = index.toString()
+    //             const id = uuid()
+    //             const subnode = (
+    //             <AceEditor
+    //                 id={id}
+    //                 mode={mode}
+    //                 theme={theme}
+    //                 value={textToAdd}
+    //                 name={'UNIQUE_ID'}
+    //                 fontSize={30}
+    //                 className="aceEditor"
+    //                 width={`${this.editorWidth}px`}
+    //                 height={`${this.editorHeight}px`}
+    //                 editorProps={{$blockScrolling: true}}
+    //                 setOptions={{
+    //                     enableBasicAutocompletion: true,
+    //                     enableLiveAutocompletion: true,
+    //                     enableSnippets: false,
+    //                     showLineNumbers: true,
+    //                     tabSize: 2,
+    //                     wrapBehavioursEnabled: true,
+    //                     wrap: true,
+    //                     useSoftTabs: true
+    //                 }}
+    //                 editorProps={{$blockScrolling: true}}
+    //             />)
+    //             // subContainers.appendChild(subnode)
+    //             // console.log('subNode')
+    //             // console.log(subnode)
+    //             // console.log(typeof subnode)
+    //             // console.log("renderToStaticMarkup")
+    //             // console.log(ReactDOMServer.renderToString())
+    //             // console.log("------------")
+    //             // console.log(ReactDOMServer.renderToStaticMarkup(subnode))
+    //             // console.log("**********")
+    //             // this.setState({ code:  this.typedCode, subDOM : [...this.state.subDOM, subnode]})
+    //             // const subConatinerDOM = document.getElementById(id)
+    //             // console.log("subContainerDOM")
+    //             // console.log(subConatinerDOM)
+    //             // console.log(typeof subConatinerDOM)
+    //             // subConatinerDOM.style.display = "block"
+    //             const ReactDOMtoDOMObect  = ReactDOMServer.renderToStaticMarkup(subnode)
+                
+    //             console.log(ReactDOMServer.renderToString(subnode))
+    //             this.setState({
+    //                 renderToStringString: ReactDOMServer.renderToString(subnode),
+    //                 renderToStaticStringString: ReactDOMServer.renderToStaticMarkup(subnode)
+    //             })
+    //             console.log(ReactDOMtoDOMObect)
+    //             const DOMobject = document.createElement('div')
+    //             DOMobject.innerHTML = ReactDOMtoDOMObect
+    //             DOMobject.height = this.editorHeight
+    //             DOMobject.width = this.editorWidth
+    //             console.log(DOMobject)
+    //             domtoimage.toCanvas(DOMobject)
+    //             // console.log(DOMobject)
+    //             .then((canvas) => {
+    //                 console.log("canvas")
+    //                 console.log(canvas)
+    //                 // subConatinerDOM.style.display = "none"
+    //                 this.gif.addFrame(canvas);
+    //             })
+    //             .catch(function (error) {
+    //                 console.error('oops, something went wrong!', error);
+    //             });
+    //         }
+    //     }
+    // }
+
     genrateSubFrames = async (text) => {
-        const PreviousCodeSnippetcode = this.typedCode
-        this.typedCode = this.typedCode + text
         const { theme, mode } = this.state;
-        const splits = text.split('');
-        for(let index=0; index<splits.length; index++){
-            const token = splits[index]
-            if(((String(token).trim().length === 0) || (token === '.') || (token === ',') || (token === ';'))) {
-                const textToAdd = PreviousCodeSnippetcode + text.slice(0, index)
-                // const id = index.toString()
-                const id = uuid()
-                const subnode = (
+            const subnode = (
                 <AceEditor
-                    id={id}
                     mode={mode}
                     theme={theme}
-                    value={textToAdd}
+                    value={text}
                     name={'UNIQUE_ID'}
                     fontSize={30}
                     className="aceEditor"
@@ -149,42 +220,10 @@ export default class App extends Component {
                     }}
                     editorProps={{$blockScrolling: true}}
                 />)
-                // subContainers.appendChild(subnode)
-                // console.log('subNode')
-                // console.log(subnode)
-                // console.log(typeof subnode)
-                // console.log("renderToStaticMarkup")
-                // console.log(ReactDOMServer.renderToString())
-                // console.log("------------")
-                // console.log(ReactDOMServer.renderToStaticMarkup(subnode))
-                // console.log("**********")
-                // this.setState({ code:  this.typedCode, subDOM : [...this.state.subDOM, subnode]})
-                // const subConatinerDOM = document.getElementById(id)
-                // console.log("subContainerDOM")
-                // console.log(subConatinerDOM)
-                // console.log(typeof subConatinerDOM)
-                // subConatinerDOM.style.display = "block"
-                const ReactDOMtoDOMObect  = ReactDOMServer.renderToStaticMarkup(subnode)
-                console.log(ReactDOMServer.renderToString(subnode))
-                console.log(ReactDOMtoDOMObect)
-                const DOMobject = document.createElement('div')
-                DOMobject.innerHTML = ReactDOMtoDOMObect
-                DOMobject.height = this.editorHeight
-                DOMobject.width = this.editorWidth
-                console.log(DOMobject)
-                domtoimage.toCanvas(DOMobject)
-                // console.log(DOMobject)
-                .then((canvas) => {
-                    console.log("canvas")
-                    console.log(canvas)
-                    // subConatinerDOM.style.display = "none"
-                    this.gif.addFrame(canvas);
+                this.setState({
+                    renderToStringString: ReactDOMServer.renderToString(subnode),
+                    renderToStaticStringString: ReactDOMServer.renderToStaticMarkup(subnode)
                 })
-                .catch(function (error) {
-                    console.error('oops, something went wrong!', error);
-                });
-            }
-        }
     }
 
     onSelectChange = (e) => {
@@ -192,14 +231,34 @@ export default class App extends Component {
             selectValue:e.target.value
         })
     }
+    createMarkup = () => {
+        // return {__html: 'First &middot; Second'};
+        if(this.state.renderToStringString)
+            return {__html: this.state.renderToStringString};
+      }
 
 	render () {
-        const { imageSrc, selectValue, code, theme, mode } = this.state;
+        const { imageSrc, selectValue, code, theme, mode, renderToStringString, renderToStaticStringString } = this.state;
 
 		return (
                 <div className="container">
                     <h1 className="container__header">Gif Snippet</h1>
                     <div className="subContainer">
+                        <div id="subcontainer__checkenderToString" style={{color:'white'}}>
+                            <div dangerouslySetInnerHTML={this.createMarkup()} />
+                        </div>
+                        <div id="subcontainer__checkenderToString" style={{color:'white'}}>
+                            {
+                                (renderToStringString)
+                            }
+                        </div>
+                        <div id="subcontainer__checkenderToString" innerHTML="{renderToStringString}">
+                        </div>
+                        <div id="subcontainer__checkenderToString">
+                            {
+                                renderToStaticStringString
+                            }
+                        </div>
                         <div className = "subContainer__inputContainer">
                             <div className="subContainer__customizeOptions">
                                 <select className="subContainer__customizeOptions__dropdown" onChange={this.onSelectChange} value={selectValue}>
