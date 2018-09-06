@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 
 import domtoimage from '../utils/domToCanvas';
 
+import * as ace from 'brace';
+
 import "brace/ext/language_tools";
 import "brace/ext/searchbox";
 import "brace/keybinding/vim";
@@ -52,6 +54,15 @@ export default class App extends Component {
         this.editorHeight = window.screen.height * 0.6,
         this.editorWidth = window.screen.width * 0.8
         this.onPasteChange = false
+        const editor = ace.edit(document.querySelector('javascript-editor'));
+        editor.getSession().setMode('ace/mode/javascript');
+        editor.setTheme('ace/theme/monokai');
+        console.log(editor)
+        console.log(document.querySelector("#capture"))
+    }
+
+    componentDidMount(){
+        console.log(document.querySelector("#capture"))
     }
 
     getGif = () => {
@@ -108,14 +119,15 @@ export default class App extends Component {
     }
 
     processPastedCode = (text) => {
-        const startime = new Date()
-        // this.setState({code: "hola"})
-        this.onPasteChange = true
-        text = text.text
-        setTimeout(() => { this.onPasteChange = false})
-        setTimeout(() => this.genrateSubFrames(text))
-        console.log("hey")
-        return
+        console.log(document.querySelector("#capture"))
+        // const startime = new Date()
+        // // this.setState({code: "hola"})
+        // this.onPasteChange = true
+        // text = text.text
+        // setTimeout(() => { this.onPasteChange = false})
+        // setTimeout(() => this.genrateSubFrames(text))
+        // console.log("hey")
+        // return
     }
     
     // genrateSubFrames = async (text) => {
@@ -249,6 +261,7 @@ export default class App extends Component {
                 <div className="container">
                     <h1 className="container__header">Gif Snippet</h1>
                     <div className="subContainer">
+                        <div id="javascript-editor"></div>
                         <div id="subcontainer__ReactDOMRender"> 
                         </div>
                         <div id="subcontainer__checkenderToString" style={{color:'white'}}>
