@@ -7,6 +7,9 @@ import domtoimage from '../utils/domToCanvas';
 
 import * as ace from 'brace';
 
+import worker from './app.worker.js';
+import WebWorker from './WebWorker';
+
 import "brace/ext/language_tools";
 import "brace/ext/searchbox";
 import "brace/keybinding/vim";
@@ -41,7 +44,8 @@ export default class App extends Component {
             theme: 'monokai',
             subDOM : [],
             renderToStringString: '<div style="color:white">H</div>',
-            renderToStaticStringString: '<div>I>/div>'
+            renderToStaticStringString: '<div>I>/div>',
+            users: [10, 9 , 1 , 3 , 2]
         };
         console.log(typeof this.state.renderToStringString)
         this.typedCode = ''
@@ -57,6 +61,14 @@ export default class App extends Component {
     }
 
     componentDidMount(){
+        this.worker = new WebWorker(worker);
+        console.log(this.worker);
+        this.worker.addEventListener('message', event => {
+            const sortedList = event.data;
+            this.setState({
+                users: sortedList
+            })
+        });
         const { theme, mode } = this.state;
         const editor = ace.edit(document.querySelector('javascript-editor'));
         editor.getSession().setMode('ace/mode/javascript');
@@ -138,6 +150,10 @@ export default class App extends Component {
         // this.setState({
         //     typedCode: this.state.code+newCode
         // });
+    }
+
+    handleSort = () => {
+        this.worker.postMessage(this.state.users);
     }
 
     processPastedCode = (text) => {
@@ -283,6 +299,12 @@ export default class App extends Component {
                 <div className="container">
                     <h1 className="container__header">Gif Snippet</h1>
                     <div className="subContainer">
+                        <div className="checkWebWorkerContainer">
+                            {
+                                this.state.users.map(num => <div key={num} style={{color:'white'}}>{num}</div>)
+                            }
+                            <button onClick={this.handleSort}>sort</button>
+                        </div>
                         <div id="javascript-editor"></div>
                         <div id="subcontainer__ReactDOMRender"> 
                         </div>
