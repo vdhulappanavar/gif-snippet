@@ -54,14 +54,36 @@ export default class App extends Component {
         this.editorHeight = window.screen.height * 0.6,
         this.editorWidth = window.screen.width * 0.8
         this.onPasteChange = false
+    }
+
+    componentDidMount(){
+        const { theme, mode } = this.state;
         const editor = ace.edit(document.querySelector('javascript-editor'));
         editor.getSession().setMode('ace/mode/javascript');
         editor.setTheme('ace/theme/monokai');
         console.log(editor)
+        console.log(ReactDOMServer.renderToString(<AceEditor mode={mode}
+            theme={theme}
+            value={'testing'}
+            name={'UNIQUE_ID'}
+            fontSize={30}
+            className="aceEditor"
+            width={`${this.editorWidth}px`}
+            height={`${this.editorHeight}px`}
+            editorProps={{$blockScrolling: true}}
+            setOptions={{
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+                enableSnippets: false,
+                showLineNumbers: true,
+                tabSize: 2,
+                wrapBehavioursEnabled: true,
+                wrap: true,
+                useSoftTabs: true
+            }}
+            editorProps={{$blockScrolling: true}}/>))
         console.log(document.querySelector("#capture"))
-    }
-
-    componentDidMount(){
+        console.log(document.querySelector('javascript-editor'))
         console.log(document.querySelector("#capture"))
     }
 
@@ -326,7 +348,7 @@ export default class App extends Component {
                                     // ctx.fillRect(150, 150, 200, 200);
                                     // ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
                                     // ctx.fillRect(200, 50, 200, 200);`}
-                                    value={code}
+                                    value={`var a = 01`}
                                     onPaste={this.processPastedCode}
                                     onChange={this.updateCode}
                                     name="UNIQUE_ID_OF_DIV"
