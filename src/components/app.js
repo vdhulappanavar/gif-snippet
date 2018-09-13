@@ -153,7 +153,12 @@ export default class App extends Component {
     }
 
     handleSort = () => {
-        this.worker.postMessage(this.state.users);
+        console.log(document)
+        const data = {
+            users: this.state.users,
+            document: 'document'
+        }
+        this.worker.postMessage(data);
     }
 
     processPastedCode = (text) => {
